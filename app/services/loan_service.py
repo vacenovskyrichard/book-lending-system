@@ -2,9 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.models.db.loan import Loan
-from app.models.db.book_copy import BookCopyStatus
-from app.models.schemas.loan import LoanCreate, LoanRead, LoanReturn
+from app.api.schemas.loan import LoanCreate, LoanRead, LoanReturn
+from app.db.models.book_copy import BookCopyStatus
+from app.db.models.loan import Loan
 from app.repositories.book_repository import BookRepository
 from app.repositories.loan_repository import LoanRepository
 from app.repositories.user_repository import UserRepository

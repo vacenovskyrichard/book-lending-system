@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
 
-from app.models.db.book import Book
-from app.models.db.book_copy import BookCopyStatus
-from app.models.schemas.book import BookCreate, BookRead
+from app.api.schemas.book import BookCreate, BookRead
+from app.db.models.book import Book
+from app.db.models.book_copy import BookCopyStatus
 from app.repositories.book_repository import BookRepository
 
 

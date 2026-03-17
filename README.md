@@ -9,10 +9,10 @@ This project is intended to be run with Docker.
 The project is split into clear layers:
 
 - `api` contains HTTP routers.
+- `api/schemas` contains request and response schemas.
 - `services` contains business logic.
 - `repositories` handles database access.
-- `models/db` contains SQLAlchemy models.
-- `models/schemas` contains Pydantic schemas.
+- `db/models` contains SQLAlchemy models.
 - `alembic` manages database migrations.
 
 This structure makes it easy to extend the system later with entities such as `authors`, `fines`, `reservations`, or additional audit tables.
@@ -67,6 +67,10 @@ docker compose up --build
 The API will be available at [http://localhost:8000](http://localhost:8000).
 
 Swagger UI is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+The default application and database configuration is defined directly in
+[docker-compose.yml](C:/Users/richa/repos/book-lending-system/docker-compose.yml),
+so no `.env` file is required for the standard setup.
 
 Stop the application:
 

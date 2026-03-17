@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.db.book_copy import BookCopy
-from app.models.db.loan import Loan
+from app.db.models.book_copy import BookCopy
+from app.db.models.loan import Loan
 
 
 class LoanRepository:

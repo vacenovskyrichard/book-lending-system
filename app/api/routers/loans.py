@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Header, status
 
+from app.api.schemas.loan import LoanCreate, LoanRead, LoanReturn
 from app.dependencies import get_loan_service
-from app.models.schemas.loan import LoanCreate, LoanRead, LoanReturn
 from app.services.loan_service import LoanService
 
 router = APIRouter(prefix="/loans", tags=["loans"])

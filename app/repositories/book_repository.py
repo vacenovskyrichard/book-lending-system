@@ -1,8 +1,8 @@
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models.db.book import Book
-from app.models.db.book_copy import BookCopy, BookCopyStatus
+from app.db.models.book import Book
+from app.db.models.book_copy import BookCopy, BookCopyStatus
 
 
 class BookRepository:

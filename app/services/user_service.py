@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 
-from app.models.schemas.user import UserCreate, UserRead
+from app.api.schemas.user import UserCreate, UserRead
 from app.repositories.user_repository import UserRepository
 
 

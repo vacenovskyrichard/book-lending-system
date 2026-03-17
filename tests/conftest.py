@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.core.database import Base, get_db_session
+from app.db.models import Book, BookCopy, Loan, User  # noqa: F401
 from app.main import app
-from app.models.db import Book, BookCopy, Loan, User  # noqa: F401
 
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite://"
