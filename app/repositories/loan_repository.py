@@ -25,12 +25,14 @@ class LoanRepository:
         )
         return self.session.scalar(statement)
 
-    def list_all(self) -> list[Loan]:
+    def list_all(self, *, active_only: bool = False) -> list[Loan]:
         statement = (
             select(Loan)
             .options(joinedload(Loan.book_copy).joinedload(BookCopy.book))
             .order_by(Loan.id.desc())
         )
+        if active_only:
+            statement = statement.where(Loan.returned_at.is_(None))
         return list(self.session.scalars(statement).unique().all())
 
     def mark_returned(self, loan: Loan, *, returned_by_user_id: int) -> Loan:

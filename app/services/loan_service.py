@@ -98,8 +98,8 @@ class LoanService:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Loan return failed.")
         return self._to_schema(returned_loan)
 
-    def list_loans(self) -> list[LoanRead]:
-        return [self._to_schema(loan) for loan in self.loan_repository.list_all()]
+    def list_loans(self, *, active_only: bool = False) -> list[LoanRead]:
+        return [self._to_schema(loan) for loan in self.loan_repository.list_all(active_only=active_only)]
 
     def _to_schema(self, loan: Loan) -> LoanRead:
         return LoanRead(

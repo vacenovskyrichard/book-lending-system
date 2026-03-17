@@ -77,6 +77,10 @@ added through `POST /api/books/{book_id}/copies`.
 - `POST /api/loans/return`
 - `GET /api/loans`
 
+Optional query parameter:
+
+- `active_only=true` returns only currently active loans.
+
 Required header for both borrowing and returning:
 
 - `x-user-id: <USER_ID>`
