@@ -286,3 +286,40 @@ def test_list_loans_returns_borrowing_history(client: TestClient):
     assert data[0]["book_title"] == "Dune"
     assert data[1]["book_title"] == "1984"
     assert all(item["is_active"] is True for item in data)
+
+
+def test_list_loans_active_only_returns_only_open_loans(client: TestClient):
+    user = create_user(client, "Jan Novak", "jan.novak@example.com")
+    first_book = create_book(client, "1984", "George Orwell", copies_count=1)
+    second_book = create_book(client, "Dune", "Frank Herbert", copies_count=1)
+
+    closed_loan_response = client.post(
+        "/api/loans/borrow",
+        headers={"x-user-id": str(user["id"])},
+        json={"book_id": first_book["id"]},
+    )
+    open_loan_response = client.post(
+        "/api/loans/borrow",
+        headers={"x-user-id": str(user["id"])},
+        json={"book_id": second_book["id"]},
+    )
+
+    closed_loan = closed_loan_response.json()
+
+    return_response = client.post(
+        "/api/loans/return",
+        headers={"x-user-id": str(user["id"])},
+        json={"loan_id": closed_loan["id"]},
+    )
+
+    assert closed_loan_response.status_code == 201
+    assert open_loan_response.status_code == 201
+    assert return_response.status_code == 200
+
+    response = client.get("/api/loans", params={"active_only": True})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["book_title"] == "Dune"
+    assert data[0]["is_active"] is True

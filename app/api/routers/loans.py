@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header, status
+from fastapi import APIRouter, Depends, Header, Query, status
 
 from app.api.schemas.loan import LoanCreate, LoanRead, LoanReturn
 from app.dependencies import get_loan_service
@@ -26,5 +26,8 @@ def return_book(
 
 
 @router.get("", response_model=list[LoanRead])
-def list_loans(service: LoanService = Depends(get_loan_service)) -> list[LoanRead]:
-    return service.list_loans()
+def list_loans(
+    active_only: bool = Query(default=False),
+    service: LoanService = Depends(get_loan_service),
+) -> list[LoanRead]:
+    return service.list_loans(active_only=active_only)
