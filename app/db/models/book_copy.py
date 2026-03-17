@@ -22,7 +22,11 @@ class BookCopy(Base):
     book_id: Mapped[int] = mapped_column(ForeignKey("books.id", ondelete="CASCADE"), nullable=False, index=True)
     inventory_number: Mapped[int] = mapped_column(nullable=False)
     status: Mapped[BookCopyStatus] = mapped_column(
-        SqlEnum(BookCopyStatus, name="book_copy_status"),
+        SqlEnum(
+            BookCopyStatus,
+            name="book_copy_status",
+            values_callable=lambda enum_cls: [item.value for item in enum_cls],
+        ),
         default=BookCopyStatus.AVAILABLE,
         nullable=False,
     )
