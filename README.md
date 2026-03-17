@@ -37,12 +37,39 @@ Separating `books` and `book_copies` allows the system to support multiple copie
 ### Books
 
 - `POST /api/books`
+- `POST /api/books/{book_id}/copies`
 - `GET /api/books`
 - `GET /api/books/{book_id}`
 
 Optional query parameter:
 
 - `available_only=true` returns only books with at least one available copy.
+
+The API distinguishes between:
+
+- a book title, represented by the `books` table
+- physical copies of that title, represented by the `book_copies` table
+
+`POST /api/books` creates a new unique book title and also creates the initial
+number of physical copies defined by `copies_count`.
+
+For example, creating:
+
+```json
+{
+  "title": "1984",
+  "author": "George Orwell",
+  "copies_count": 3
+}
+```
+
+creates one book title and three physical copies linked to that title.
+
+The same title cannot be created twice with the same `title` and `author`
+combination.
+
+If more physical copies of an existing title are needed later, they must be
+added through `POST /api/books/{book_id}/copies`.
 
 ### Loans
 

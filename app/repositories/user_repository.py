@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db.models.user import User
@@ -11,7 +12,11 @@ class UserRepository:
     def create(self, *, full_name: str, email: str) -> User:
         user = User(full_name=full_name, email=email)
         self.session.add(user)
-        self.session.commit()
+        try:
+            self.session.commit()
+        except IntegrityError:
+            self.session.rollback()
+            raise
         self.session.refresh(user)
         return user
 

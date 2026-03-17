@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, status
 
-from app.api.schemas.book import BookCreate, BookRead
+from app.api.schemas.book import BookCopyCreate, BookCreate, BookRead
 from app.dependencies import get_book_service
 from app.services.book_service import BookService
 
@@ -13,6 +13,15 @@ def create_book(
     service: BookService = Depends(get_book_service),
 ) -> BookRead:
     return service.create_book(payload)
+
+
+@router.post("/{book_id}/copies", response_model=BookRead)
+def add_book_copies(
+    book_id: int,
+    payload: BookCopyCreate,
+    service: BookService = Depends(get_book_service),
+) -> BookRead:
+    return service.add_copies(book_id, payload)
 
 
 @router.get("", response_model=list[BookRead])

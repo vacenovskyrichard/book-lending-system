@@ -9,6 +9,10 @@ class BookCreate(BaseModel):
     copies_count: int = Field(default=1, ge=1, le=100)
 
 
+class BookCopyCreate(BaseModel):
+    copies_count: int = Field(default=1, ge=1, le=100)
+
+
 class BookRead(BaseModel):
     id: int
     title: str

@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
-from app.api.schemas.book import BookCreate, BookRead
+from app.api.schemas.book import BookCopyCreate, BookCreate, BookRead
 from app.db.models.book import Book
 from app.db.models.book_copy import BookCopyStatus
 from app.repositories.book_repository import BookRepository
@@ -11,13 +12,25 @@ class BookService:
         self.repository = repository
 
     def create_book(self, payload: BookCreate) -> BookRead:
-        book = self.repository.create(
-            title=payload.title,
-            author=payload.author,
-            copies_count=payload.copies_count,
-        )
+        try:
+            book = self.repository.create(
+                title=payload.title,
+                author=payload.author,
+                copies_count=payload.copies_count,
+            )
+        except IntegrityError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Book with this title and author already exists.",
+            ) from exc
         if book is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Book creation failed.")
+        return self._to_schema(book)
+
+    def add_copies(self, book_id: int, payload: BookCopyCreate) -> BookRead:
+        book = self.repository.add_copies(book_id=book_id, copies_count=payload.copies_count)
+        if not book:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
         return self._to_schema(book)
 
     def get_book(self, book_id: int) -> BookRead:
