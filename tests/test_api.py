@@ -44,6 +44,21 @@ def test_create_user_rejects_duplicate_email(client: TestClient):
     assert response.json()["detail"] == "User with this email already exists."
 
 
+def test_create_user_duplicate_email_keeps_conflict_response(client: TestClient):
+    first_response = client.post(
+        "/api/users",
+        json={"full_name": "Jan Novak", "email": "jan.novak@example.com"},
+    )
+    second_response = client.post(
+        "/api/users",
+        json={"full_name": "Jan Novak Again", "email": "jan.novak@example.com"},
+    )
+
+    assert first_response.status_code == 201
+    assert second_response.status_code == 409
+    assert second_response.json()["detail"] == "User with this email already exists."
+
+
 def test_create_book_returns_availability_summary(client: TestClient):
     response = client.post(
         "/api/books",
@@ -57,6 +72,33 @@ def test_create_book_returns_availability_summary(client: TestClient):
     assert data["total_copies"] == 3
     assert data["available_copies"] == 3
     assert data["is_available"] is True
+
+
+def test_create_book_rejects_duplicate_title_and_author(client: TestClient):
+    create_book(client, "1984", "George Orwell", copies_count=1)
+
+    response = client.post(
+        "/api/books",
+        json={"title": "1984", "author": "George Orwell", "copies_count": 2},
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Book with this title and author already exists."
+
+
+def test_add_book_copies_extends_existing_title(client: TestClient):
+    book = create_book(client, "1984", "George Orwell", copies_count=1)
+
+    response = client.post(
+        f"/api/books/{book['id']}/copies",
+        json={"copies_count": 2},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == book["id"]
+    assert data["total_copies"] == 3
+    assert data["available_copies"] == 3
 
 
 def test_borrow_book_marks_copy_as_unavailable(client: TestClient):

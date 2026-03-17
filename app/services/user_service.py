@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
 from app.api.schemas.user import UserCreate, UserRead
 from app.repositories.user_repository import UserRepository
@@ -16,7 +17,13 @@ class UserService:
                 detail="User with this email already exists.",
             )
 
-        user = self.repository.create(full_name=payload.full_name, email=str(payload.email))
+        try:
+            user = self.repository.create(full_name=payload.full_name, email=str(payload.email))
+        except IntegrityError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="User with this email already exists.",
+            ) from exc
         return UserRead.model_validate(user)
 
     def get_user(self, user_id: int) -> UserRead:
